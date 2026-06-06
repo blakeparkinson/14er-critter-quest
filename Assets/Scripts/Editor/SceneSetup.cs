@@ -4,52 +4,29 @@ using UnityEditor.SceneManagement;
 
 public class SceneSetup
 {
-    [MenuItem("14er Critter Quest/Create Bootstrap Scene (Play Immediately)")]
-    public static void CreateBootstrapScene()
+    [MenuItem("14er Critter Quest/Create Top-Down Pixel Art Scene (Play Immediately)")]
+    public static void CreateTopDownScene()
     {
-        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
 
-        // bootstrap object
-        var bootstrap = new GameObject("GameBootstrap");
-        bootstrap.AddComponent<GameBootstrap>();
+        // remove directional light (not needed for 2D)
+        var light = Object.FindFirstObjectByType<Light>();
+        if (light != null) Object.DestroyImmediate(light.gameObject);
 
-        // save scene
-        string scenePath = "Assets/Scenes/Game.unity";
+        var bootstrap = new GameObject("TopDownBootstrap");
+        bootstrap.AddComponent<TopDownBootstrap>();
+
+        string scenePath = "Assets/Scenes/TopDown.unity";
         if (!AssetDatabase.IsValidFolder("Assets/Scenes"))
             AssetDatabase.CreateFolder("Assets", "Scenes");
 
         EditorSceneManager.SaveScene(scene, scenePath);
 
-        // add to build settings
         var scenes = new EditorBuildSettingsScene[] {
             new EditorBuildSettingsScene(scenePath, true)
         };
         EditorBuildSettings.scenes = scenes;
 
-        Debug.Log("Bootstrap scene created at Assets/Scenes/Game.unity — press Play!");
-        Debug.Log("The entire game level generates at runtime. No manual setup needed.");
-    }
-
-    [MenuItem("14er Critter Quest/Setup Ground Layer")]
-    public static void SetupGroundLayer()
-    {
-        SerializedObject tagManager = new SerializedObject(
-            AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
-        SerializedProperty layers = tagManager.FindProperty("layers");
-
-        // find first empty user layer (8+)
-        for (int i = 8; i < layers.arraySize; i++)
-        {
-            SerializedProperty layer = layers.GetArrayElementAtIndex(i);
-            if (string.IsNullOrEmpty(layer.stringValue))
-            {
-                layer.stringValue = "Ground";
-                tagManager.ApplyModifiedProperties();
-                Debug.Log($"Created 'Ground' layer at index {i}");
-                return;
-            }
-        }
-
-        Debug.LogWarning("No empty layer slots available!");
+        Debug.Log("Top-down pixel art scene created! Press Play.");
     }
 }

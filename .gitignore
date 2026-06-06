@@ -49,3 +49,12 @@ crashlytics-build.properties
 
 # Packages
 *.unitypackage
+
+# TextMesh Pro (imported via Unity, not needed in repo)
+Assets/TextMesh Pro/
+
+# Mobile Dependency Resolver
+Assets/MobileDependencyResolver/
+
+# Resources auto-generated
+Assets/Resources/BillingMode.json

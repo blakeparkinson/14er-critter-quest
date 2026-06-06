@@ -89,6 +89,28 @@ public class AudioManager : MonoBehaviour
         proceduralClips["summit"] = GenerateFanfare();
         proceduralClips["squeak"] = GenerateTone(0.08f, 2000, 2500, 0.15f);
         proceduralClips["whistle"] = GenerateTone(0.3f, 1200, 800, 0.2f);
+        proceduralClips["footstep"] = GenerateFootstep();
+    }
+
+    private AudioClip GenerateFootstep()
+    {
+        int sampleRate = 44100;
+        float duration = 0.12f;
+        int sampleCount = (int)(sampleRate * duration);
+        float[] samples = new float[sampleCount];
+
+        for (int i = 0; i < sampleCount; i++)
+        {
+            float t = (float)i / sampleCount;
+            float env = Mathf.Exp(-t * 30f);
+            float noise = (Random.Range(-1f, 1f)) * 0.2f * env;
+            float thud = Mathf.Sin(t * 200f) * 0.15f * env;
+            samples[i] = noise + thud;
+        }
+
+        var clip = AudioClip.Create("footstep", sampleCount, 1, sampleRate, false);
+        clip.SetData(samples, 0);
+        return clip;
     }
 
     private AudioClip GenerateTone(float duration, float startFreq, float endFreq, float volume)

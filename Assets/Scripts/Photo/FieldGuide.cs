@@ -32,6 +32,8 @@ public class FieldGuide : MonoBehaviour
         }
     }
 
+    private bool initialized;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -41,6 +43,19 @@ public class FieldGuide : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        TryInitialize();
+    }
+
+    private void Start()
+    {
+        TryInitialize();
+    }
+
+    private void TryInitialize()
+    {
+        if (initialized || allCritters == null || allCritters.Length == 0) return;
+        initialized = true;
 
         foreach (var critter in allCritters)
         {
