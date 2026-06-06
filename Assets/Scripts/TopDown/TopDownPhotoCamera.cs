@@ -99,6 +99,10 @@ public class TopDownPhotoCamera : MonoBehaviour
             var result = ScorePhoto(critters);
             ShowFeedback(result);
 
+            // photo effects (screen shake + sparkles)
+            var fx = GetComponent<PhotoEffects>();
+            if (fx != null) fx.TriggerPhotoEffect(transform.position, result.rating);
+
             foreach (var c in critters)
                 c.OnPhotographed();
 

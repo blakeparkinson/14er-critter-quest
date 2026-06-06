@@ -31,11 +31,15 @@ public class TopDownBootstrap : MonoBehaviour
         // critters
         SpawnCritters(world);
 
-        // photo camera on player
+        // photo camera + effects on player
         player.AddComponent<TopDownPhotoCamera>();
+        player.AddComponent<PhotoEffects>();
 
         // HUD
         CreateHUD();
+
+        // music
+        new GameObject("Music").AddComponent<MusicGenerator>();
 
         // extras
         new GameObject("DiscoveryPopup").AddComponent<DiscoveryPopup>();
