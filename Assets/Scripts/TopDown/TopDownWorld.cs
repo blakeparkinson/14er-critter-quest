@@ -23,10 +23,11 @@ public class TopDownWorld : MonoBehaviour
             {
                 Vector3 pos = new Vector3(x, y, 0);
 
-                // winding trail
-                float trailCenter = mapWidth / 2f + Mathf.Sin(y * 0.12f) * 6f + Mathf.Sin(y * 0.05f) * 3f;
+                // winding trail — wider and more obvious
+                float trailCenter = mapWidth / 2f + Mathf.Sin(y * 0.1f) * 5f + Mathf.Sin(y * 0.04f) * 2f;
                 float distFromTrail = Mathf.Abs(x - trailCenter);
-                bool isTrail = distFromTrail < 1.8f;
+                bool isTrail = distFromTrail < 2.5f;
+                bool isTrailEdge = distFromTrail >= 2.5f && distFromTrail < 3.2f;
 
                 // create tile
                 var tile = new GameObject($"T{x}_{y}");
@@ -40,9 +41,17 @@ public class TopDownWorld : MonoBehaviour
                 if (isTrail)
                 {
                     sr.sprite = PixelArt.DirtTile();
-                    // trail edge detail
-                    if (distFromTrail > 1.2f)
-                        sr.color = new Color(0.9f, 0.88f, 0.85f);
+                    // lighter center, darker edges
+                    if (distFromTrail < 1f)
+                        sr.color = new Color(0.95f, 0.9f, 0.82f);
+                    else if (distFromTrail > 1.8f)
+                        sr.color = new Color(0.85f, 0.78f, 0.68f);
+                }
+                else if (isTrailEdge)
+                {
+                    // rocky edge of trail
+                    sr.sprite = PixelArt.RockTile();
+                    sr.color = new Color(0.7f, 0.65f, 0.58f, 0.5f);
                 }
                 else
                 {

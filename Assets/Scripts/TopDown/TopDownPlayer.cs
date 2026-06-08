@@ -75,6 +75,12 @@ public class TopDownPlayer : MonoBehaviour
         float speed = isJogging ? jogSpeed : walkSpeed;
         rb.linearVelocity = moveInput.normalized * speed;
 
+        // keep player within world bounds
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Clamp(pos.x, 0.5f, 31.5f);
+        pos.y = Mathf.Clamp(pos.y, 0f, 102f);
+        transform.position = pos;
+
         // stamina
         if (isJogging && IsMoving)
             currentStamina -= jogDrain * Time.deltaTime;

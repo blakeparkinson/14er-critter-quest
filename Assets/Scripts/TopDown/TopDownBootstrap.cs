@@ -44,6 +44,8 @@ public class TopDownBootstrap : MonoBehaviour
         // extras
         new GameObject("DiscoveryPopup").AddComponent<DiscoveryPopup>();
         new GameObject("BiomeAmbience").AddComponent<BiomeAmbience>();
+        new GameObject("Tutorial").AddComponent<TutorialOverlay>();
+        new GameObject("FieldGuideViewer").AddComponent<FieldGuideViewer>();
 
         // climb progress bar
         var canvas = FindFirstObjectByType<Canvas>();
@@ -54,6 +56,9 @@ public class TopDownBootstrap : MonoBehaviour
 
             var radar = new GameObject("CritterRadar").AddComponent<CritterRadar>();
             radar.Setup(canvas.transform);
+
+            var compass = new GameObject("SummitCompass").AddComponent<SummitCompass>();
+            compass.Setup(canvas.transform, world.SummitPos);
         }
 
         // title screen (shows on top, pauses game until dismissed)

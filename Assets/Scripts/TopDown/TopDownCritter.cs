@@ -12,6 +12,7 @@ public class TopDownCritter : MonoBehaviour
     private bool isSilly;
     private string currentSillyAction;
     private float wanderRadius = 3f;
+    private TMPro.TextMeshPro nameLabel;
 
     private enum State { Idle, Wander, Flee, Silly }
     private State state = State.Idle;
@@ -26,6 +27,19 @@ public class TopDownCritter : MonoBehaviour
         homePos = transform.position;
         sr = GetComponent<SpriteRenderer>();
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        // make critters more visible — slightly larger
+        float scale = data.critterName switch
+        {
+            "Steve" or "Karen" => 1.8f,
+            "Reginald" or "Big Tony" => 1.5f,
+            "Gerald" or "Professor Whiskers" => 1.2f,
+            _ => 1.1f
+        };
+        transform.localScale = new Vector3(scale, scale, 1);
+
+        // name label
+        CreateNameLabel();
         EnterState(State.Idle);
     }
 
@@ -90,6 +104,25 @@ public class TopDownCritter : MonoBehaviour
 
         // sort by Y position
         sr.sortingOrder = Mathf.RoundToInt(-transform.position.y * 10) + 5;
+
+        // show name label when player is close
+        if (nameLabel != null)
+        {
+            bool showName = dist < 4f;
+            nameLabel.gameObject.SetActive(showName);
+            if (showName)
+            {
+                Color rc = data.rarity switch
+                {
+                    CritterRarity.Common => Color.white,
+                    CritterRarity.Uncommon => new Color(0.3f, 1f, 0.3f),
+                    CritterRarity.Rare => new Color(0.4f, 0.6f, 1f),
+                    CritterRarity.Legendary => new Color(1f, 0.84f, 0f),
+                    _ => Color.white
+                };
+                nameLabel.color = rc;
+            }
+        }
     }
 
     private void EnterState(State newState)
@@ -123,5 +156,19 @@ public class TopDownCritter : MonoBehaviour
             EnterState(State.Flee);
         else if (data.personality == CritterPersonality.Chaotic)
             EnterState(Random.value > 0.5f ? State.Silly : State.Flee);
+    }
+
+    private void CreateNameLabel()
+    {
+        var labelObj = new GameObject("Name");
+        labelObj.transform.parent = transform;
+        labelObj.transform.localPosition = new Vector3(0, 0.8f, 0);
+        nameLabel = labelObj.AddComponent<TMPro.TextMeshPro>();
+        nameLabel.text = data.critterName;
+        nameLabel.fontSize = 3;
+        nameLabel.alignment = TMPro.TextAlignmentOptions.Center;
+        nameLabel.sortingOrder = 200;
+        nameLabel.rectTransform.sizeDelta = new Vector2(3, 0.6f);
+        labelObj.SetActive(false);
     }
 }

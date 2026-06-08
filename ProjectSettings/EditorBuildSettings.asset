@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Game3D.unity
-    guid: 64ad32d3dc6de4d078d30a065e32fd3e
+    path: Assets/Scenes/TopDown.unity
+    guid: f589472989ce843fc8fd4037bb027cfd
   m_configObjects: {}
