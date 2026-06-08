@@ -348,102 +348,138 @@ public static class PixelArt
     {
         if (cache.TryGetValue("grass", out var s)) return s;
         Color[] px = new Color[16 * 16];
-        Color g1 = new Color(0.3f, 0.55f, 0.2f);
-        Color g2 = new Color(0.35f, 0.6f, 0.25f);
-        Color g3 = new Color(0.25f, 0.48f, 0.18f);
-        for (int i = 0; i < px.Length; i++)
-        {
-            float n = Random.value;
-            px[i] = n < 0.4f ? g1 : (n < 0.75f ? g2 : g3);
-        }
-        var sprite = MakeSprite("grass", 16, 16, px);
-        cache["grass"] = sprite;
-        return sprite;
+        Color g1 = new Color(0.28f, 0.52f, 0.18f);
+        Color g2 = new Color(0.33f, 0.58f, 0.22f);
+        Color g3 = new Color(0.38f, 0.62f, 0.25f);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++)
+            {
+                float n = Mathf.PerlinNoise(x * 0.4f + 10, y * 0.4f + 10);
+                px[y * 16 + x] = n < 0.35f ? g1 : (n < 0.65f ? g2 : g3);
+                // occasional grass blade accent
+                if (n > 0.7f && Random.value > 0.7f)
+                    px[y * 16 + x] = new Color(0.22f, 0.45f, 0.15f);
+            }
+        cache["grass"] = MakeSprite("grass", 16, 16, px);
+        return cache["grass"];
     }
 
     public static Sprite DirtTile()
     {
         if (cache.TryGetValue("dirt", out var s)) return s;
         Color[] px = new Color[16 * 16];
-        Color d1 = new Color(0.52f, 0.38f, 0.22f);
-        Color d2 = new Color(0.48f, 0.35f, 0.2f);
-        Color d3 = new Color(0.56f, 0.42f, 0.25f);
-        for (int i = 0; i < px.Length; i++)
-            px[i] = Random.value < 0.5f ? d1 : (Random.value < 0.5f ? d2 : d3);
-        var sprite = MakeSprite("dirt", 16, 16, px);
-        cache["dirt"] = sprite;
-        return sprite;
+        Color d1 = new Color(0.55f, 0.42f, 0.25f);
+        Color d2 = new Color(0.5f, 0.38f, 0.22f);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++)
+            {
+                float n = Mathf.PerlinNoise(x * 0.5f + 30, y * 0.5f + 30);
+                px[y * 16 + x] = Color.Lerp(d1, d2, n);
+                // small pebble dots
+                if (n > 0.72f) px[y * 16 + x] = new Color(0.6f, 0.55f, 0.45f);
+            }
+        cache["dirt"] = MakeSprite("dirt", 16, 16, px);
+        return cache["dirt"];
     }
 
     public static Sprite RockTile()
     {
         if (cache.TryGetValue("rock", out var s)) return s;
         Color[] px = new Color[16 * 16];
-        Color r1 = new Color(0.48f, 0.46f, 0.44f);
-        Color r2 = new Color(0.52f, 0.5f, 0.48f);
-        for (int i = 0; i < px.Length; i++)
-            px[i] = Random.value < 0.5f ? r1 : r2;
-        var sprite = MakeSprite("rock", 16, 16, px);
-        cache["rock"] = sprite;
-        return sprite;
+        Color r1 = new Color(0.45f, 0.43f, 0.42f);
+        Color r2 = new Color(0.55f, 0.53f, 0.5f);
+        Color r3 = new Color(0.4f, 0.38f, 0.38f);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++)
+            {
+                float n = Mathf.PerlinNoise(x * 0.35f + 50, y * 0.35f + 50);
+                float n2 = Mathf.PerlinNoise(x * 0.8f + 70, y * 0.8f + 70);
+                px[y * 16 + x] = n < 0.4f ? r1 : (n < 0.7f ? r2 : r3);
+                // crack lines
+                if (n2 > 0.75f) px[y * 16 + x] = new Color(0.35f, 0.33f, 0.32f);
+            }
+        cache["rock"] = MakeSprite("rock", 16, 16, px);
+        return cache["rock"];
     }
 
     public static Sprite SnowTile()
     {
         if (cache.TryGetValue("snow", out var s)) return s;
         Color[] px = new Color[16 * 16];
-        Color s1 = new Color(0.92f, 0.94f, 0.97f);
-        Color s2 = new Color(0.88f, 0.91f, 0.95f);
-        for (int i = 0; i < px.Length; i++)
-            px[i] = Random.value < 0.6f ? s1 : s2;
-        var sprite = MakeSprite("snow", 16, 16, px);
-        cache["snow"] = sprite;
-        return sprite;
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++)
+            {
+                float n = Mathf.PerlinNoise(x * 0.3f + 90, y * 0.3f + 90);
+                float v = Mathf.Lerp(0.88f, 0.97f, n);
+                px[y * 16 + x] = new Color(v, v + 0.01f, v + 0.03f);
+                // sparkle
+                if (n > 0.82f) px[y * 16 + x] = new Color(0.98f, 0.99f, 1f);
+            }
+        cache["snow"] = MakeSprite("snow", 16, 16, px);
+        return cache["snow"];
     }
 
     public static Sprite TreeTop()
     {
         if (cache.TryGetValue("treetop", out var s)) return s;
-        Color[] px = new Color[12 * 12];
-        Fill(px, 12, T);
-        Color g = new Color(0.12f, 0.35f, 0.1f);
-        Color gl = new Color(0.18f, 0.45f, 0.14f);
-        // round canopy
-        for (int y = 0; y < 12; y++)
-            for (int x = 0; x < 12; x++)
+        int w = 14, h = 14;
+        Color[] px = new Color[w * h];
+        Fill(px, w, T);
+        Color g = new Color(0.1f, 0.33f, 0.08f);
+        Color gl = new Color(0.16f, 0.43f, 0.12f);
+        Color outline = new Color(0.06f, 0.2f, 0.05f);
+        float cx = 6.5f, cy = 6.5f, r = 5.8f;
+        for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++)
             {
-                float dx = x - 5.5f, dy = y - 5.5f;
-                if (dx * dx + dy * dy < 30)
-                    px[y * 12 + x] = Random.value > 0.4f ? g : gl;
+                float dx = x - cx, dy = y - cy;
+                float d = Mathf.Sqrt(dx * dx + dy * dy);
+                if (d < r - 0.8f)
+                {
+                    float n = Mathf.PerlinNoise(x * 0.5f + 20, y * 0.5f + 20);
+                    px[y * w + x] = n > 0.45f ? gl : g;
+                    // highlight on top-left
+                    if (dx < -1 && dy < -1 && d < r - 2)
+                        px[y * w + x] = new Color(0.2f, 0.5f, 0.16f);
+                }
+                else if (d < r)
+                    px[y * w + x] = outline; // dark edge
             }
-        // trunk peek
-        DrawRect(px, 12, 5, 0, 2, 2, new Color(0.38f, 0.22f, 0.1f));
-        var sprite = MakeSprite("treetop", 12, 12, px);
-        cache["treetop"] = sprite;
-        return sprite;
+        // trunk shadow
+        DrawRect(px, w, 6, 0, 2, 2, new Color(0.32f, 0.18f, 0.08f));
+        cache["treetop"] = MakeSprite("treetop", w, h, px);
+        return cache["treetop"];
     }
 
     public static Sprite PineTreeTop()
     {
         if (cache.TryGetValue("pinetop", out var s)) return s;
-        Color[] px = new Color[10 * 14];
-        Fill(px, 10, T);
-        Color g = new Color(0.1f, 0.32f, 0.08f);
-        Color gl = new Color(0.15f, 0.4f, 0.12f);
-        // triangle shape
-        for (int y = 0; y < 12; y++)
+        int w = 12, h = 16;
+        Color[] px = new Color[w * h];
+        Fill(px, w, T);
+        Color g = new Color(0.08f, 0.3f, 0.06f);
+        Color gl = new Color(0.14f, 0.38f, 0.1f);
+        Color outline = new Color(0.04f, 0.18f, 0.04f);
+        // triangle with dark outline
+        for (int y = 0; y < 14; y++)
         {
-            int half = (12 - y) * 10 / 24 + 1;
-            int cx = 5;
-            for (int x = cx - half; x <= cx + half; x++)
-                if (x >= 0 && x < 10)
-                    px[(y + 2) * 10 + x] = Random.value > 0.35f ? g : gl;
+            int half = (14 - y) * w / 28 + 1;
+            int cx2 = w / 2;
+            for (int x = cx2 - half; x <= cx2 + half; x++)
+            {
+                if (x < 0 || x >= w) continue;
+                bool isEdge = (x == cx2 - half || x == cx2 + half || y == 13);
+                float n = Mathf.PerlinNoise(x * 0.4f + 40, y * 0.3f + 40);
+                px[(y + 2) * w + x] = isEdge ? outline : (n > 0.4f ? gl : g);
+                // snow on tips
+                if (y > 10 && n > 0.6f)
+                    px[(y + 2) * w + x] = new Color(0.85f, 0.9f, 0.92f, 0.7f);
+            }
         }
         // trunk
-        DrawRect(px, 10, 4, 0, 2, 3, new Color(0.38f, 0.22f, 0.1f));
-        var sprite = MakeSprite("pinetop", 10, 14, px);
-        cache["pinetop"] = sprite;
-        return sprite;
+        DrawRect(px, w, 5, 0, 2, 3, new Color(0.35f, 0.2f, 0.08f));
+        cache["pinetop"] = MakeSprite("pinetop", w, h, px);
+        return cache["pinetop"];
     }
 
     public static Sprite GetCritterSprite(string name, int frame)
